@@ -1,256 +1,106 @@
-/*
- * Copyright (c) 2020 The ZMK Contributors
- * SPDX-License-Identifier: MIT
- */
-
 #include <behaviors.dtsi>
-#include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/bt.h>
 #include <dt-bindings/zmk/outputs.h>
-#include <dt-bindings/zmk/pointing.h>
 
-#define BASE 0
-#define SYMBOLS 1
-#define MISC 2
-#define FUNCTIONS 3
-#define LOL 4
-
-#define COMBO_TIMEOUT 70
-
-/* Base layer positions used by combos: top row 1=Q 2=W 3=E 4=R 7=U 8=I; home row 15=D 16=F 18=H 19=J; bottom row 27=C 28=V 30=N 31=M 32=,. */
-#define POS_Q 1
-#define POS_W 2
-#define POS_E 3
-#define POS_R 4
-#define POS_U 7
-#define POS_I 8
-#define POS_D 15
-#define POS_F 16
-#define POS_H 18
-#define POS_J 19
-#define POS_C 27
-#define POS_V 28
-#define POS_N 30
-#define POS_M 31
-#define POS_COMMA 32
-
-/* LOL layer positions used by combos: top row 1=N1; home row 17=T */
-#define LOL_POS_N1 1
-#define LOL_POS_T 17
-
-&caps_word {
-    continue-list = <UNDERSCORE BACKSPACE DELETE MINUS>;
-};
+#define DEFAULT 0
+#define LOWER   1
+#define RAISE   2
+#define ADJUST  3
 
 / {
-    behaviors {
-        ht: hold_tap {
-            compatible = "zmk,behavior-hold-tap";
-            label = "hold-tap";
-            #binding-cells = <2>;
-            tapping-term-ms = <220>;
-            quick-tap-ms = <200>;
-            flavor = "tap-preferred";
-            bindings = <&kp>, <&kp>;
-        };
-
-        captap: caps_lock_tap {
-            compatible = "zmk,behavior-tap-dance";
-            #binding-cells = <0>;
-            tapping-term-ms = <200>;
-            bindings = <&caps_word>, <&kp CAPSLOCK>;
-        };
-
-        symbols_double_tap_toggle: behavior_symbols_double_tap_toggle {
-            compatible = "zmk,behavior-tap-dance";
-            label = "symbols-double-tap-toggle";
-            #binding-cells = <0>;
-            tapping-term-ms = <200>;
-            bindings = <&none>, <&tog SYMBOLS>;
-        };
-
-        symbols_hold_double_tap_toggle: behavior_symbols_hold_double_tap_toggle {
-            compatible = "zmk,behavior-hold-tap";
-            label = "symbols-hold-double-tap-toggle";
-            #binding-cells = <2>;
-            flavor = "hold-preferred";
-            tapping-term-ms = <200>;
-            quick-tap-ms = <175>;
-            bindings = <&mo>, <&symbols_double_tap_toggle>;
-        };
-    };
-
     conditional_layers {
         compatible = "zmk,conditional-layers";
 
-        tri {
-            if-layers = <SYMBOLS MISC>;
-            then-layer = <FUNCTIONS>;
-        };
-    };
-
-    combos {
-        compatible = "zmk,combos";
-
-        combo_left_brace {
-            timeout-ms = <COMBO_TIMEOUT>;
-            key-positions = <POS_E POS_D>;
-            bindings = <&kp LEFT_BRACE>;
-            layers = <BASE>;
-        };
-
-        combo_right_brace {
-            timeout-ms = <COMBO_TIMEOUT>;
-            key-positions = <POS_R POS_F>;
-            bindings = <&kp RIGHT_BRACE>;
-            layers = <BASE>;
-        };
-
-        combo_left_paren {
-            timeout-ms = <COMBO_TIMEOUT>;
-            key-positions = <POS_D POS_C>;
-            bindings = <&kp LEFT_PARENTHESIS>;
-            layers = <BASE>;
-        };
-
-        combo_right_paren {
-            timeout-ms = <COMBO_TIMEOUT>;
-            key-positions = <POS_F POS_V>;
-            bindings = <&kp RIGHT_PARENTHESIS>;
-            layers = <BASE>;
-        };
-
-        combo_ampersand_home {
-            timeout-ms = <COMBO_TIMEOUT>;
-            key-positions = <POS_H POS_J>;
-            bindings = <&kp AMPS>;
-            layers = <BASE>;
-        };
-
-        combo_minus {
-            timeout-ms = <COMBO_TIMEOUT>;
-            key-positions = <POS_U POS_I>;
-            bindings = <&kp MINUS>;
-            layers = <BASE>;
-        };
-
-        combo_underscore_bottom {
-            timeout-ms = <COMBO_TIMEOUT>;
-            key-positions = <POS_M POS_COMMA>;
-            bindings = <&kp UNDERSCORE>;
-            layers = <BASE>;
-        };
-
-        combo_globe {
-            timeout-ms = <COMBO_TIMEOUT>;
-            key-positions = <POS_Q POS_W>;
-            bindings = <&kp GLOBE>;
-            layers = <BASE>;
-        };
-
-        combo_lol_n1_t_p {
-            timeout-ms = <COMBO_TIMEOUT>;
-            key-positions = <LOL_POS_N1 LOL_POS_T>;
-            bindings = <&kp P>;
-            layers = <LOL>;
+        tri_layer {
+            if-layers = <LOWER RAISE>;
+            then-layer = <ADJUST>;
         };
     };
 
     keymap {
         compatible = "zmk,keymap";
 
-        base {
-            display-name = "base";
+        default_layer {
+            display-name = "Base";
+            //  ------------------------------------------------------------------------------------------------------------
+            //  |  TAB |  Q  |  W  |  E  |  R  |  T  |         |  Y  |  U   |  I  |  O  |  P  | BKSP |
+            //  | CTRL |  A  |  S  |  D  |  F  |  G  |         |  H  |  J   |  K  |  L  |  ;  |  '   |
+            //  | SHFT |  Z  |  X  |  C  |  V  |  B  |         |  N  |  M   |  ,  |  .  |  /  | ESC  |
+            //                     | GUI | LWR | SPC |         | ENT | RSE  | ALT |
             bindings = <
-//    ┌─────┬────────────┬────────────┬────────────┬──────┬────────────┐   ┌────────────┬─────────────────────────────────────────────────────┬─────────┬────────────┬───────────┬────────────┐
-//    │ tab │     Q      │     W      │     E      │  R   │     T      │   │     Y      │                          U                          │    I    │     O      │     P     │     \      │
-//    ├─────┼────────────┼────────────┼────────────┼──────┼────────────┤   ├────────────┼─────────────────────────────────────────────────────┼─────────┼────────────┼───────────┼────────────┤
-//    │ esc │     A      │ &ht lsft S │ &ht lgui D │  F   │ &ht lalt G │   │ &ht lalt H │                          J                          │    K    │ &ht rsft L │ lt MISC ; │ &ht rgui ' │
-//    ├─────┼────────────┼────────────┼────────────┼──────┼────────────┤   ├────────────┼─────────────────────────────────────────────────────┼─────────┼────────────┼───────────┼────────────┤
-//    │  =  │ &ht lctl Z │     X      │     C      │  V   │     B      │   │     N      │                          M                          │    ,    │     .      │ mt rctl / │     -      │
-//    └─────┴────────────┴────────────┼────────────┼──────┼────────────┤   ├────────────┼─────────────────────────────────────────────────────┼─────────┼────────────┴───────────┴────────────┘
-//                                    │  mo MISC   │ bspc │    spc     │   │    ent     │ &symbols_hold_double_tap_toggle SYMBOlsft SYMBOlsft │ &captap │
-//                                    └────────────┴──────┴────────────┘   └────────────┴─────────────────────────────────────────────────────┴─────────┘
-  &kp TAB      &kp Q         &kp W              &kp E            &kp R      &kp T                &kp Y        &kp U                                             &kp I       &kp O               &kp P             &kp BACKSLASH
-  &kp ESCAPE   &kp A         &ht LEFT_SHIFT S   &ht LEFT_GUI D   &kp F      &ht LEFT_ALT G       &ht LALT H   &kp J                                             &kp K       &ht RIGHT_SHIFT L   &lt MISC SEMI     &ht RIGHT_GUI SQT
-  &kp EQUAL    &ht LCTRL Z   &kp X              &kp C            &kp V      &kp B                &kp N        &kp M                                             &kp COMMA   &kp DOT             &mt RCTRL SLASH   &kp MINUS
-                                                &mo MISC         &kp BSPC   &kp SPACE            &kp RET      &symbols_hold_double_tap_toggle SYMBOLS SYMBOLS   &captap
+&kp TAB    &kp Q  &kp W  &kp E     &kp R      &kp T          &kp Y      &kp U      &kp I      &kp O    &kp P     &kp BSPC
+&kp LCTRL  &kp A  &kp S  &kp D     &kp F      &kp G          &kp H      &kp J      &kp K      &kp L    &kp SEMI  &kp SQT
+&kp LSHFT  &kp Z  &kp X  &kp C     &kp V      &kp B          &kp N      &kp M      &kp COMMA  &kp DOT  &kp FSLH  &kp ESC
+                         &kp LGUI  &mo LOWER  &kp SPACE      &kp RET    &mo RAISE  &kp RALT
             >;
         };
 
-        numpad {
-            display-name = "numpad";
+        lower_layer {
+            display-name = "Lower";
+            //  ------------------------------------------------------------------------------------------------------------
+            //  |  TAB |  1  |  2  |  3  |  4  |  5  |         |  6  |  7   |  8  |  9  |  0  | BKSP |
+            //  | CTRL |     |     |     |     |     |         | LFT | DWN  |  UP | RGT |     |      |
+            //  | SHFT |     |     |     |     |     |         |     |      |     |     |     |      |
+            //                     | GUI |     | SPC |         | ENT |      | ALT |
             bindings = <
-//    ┌─────┬───┬───┬─────┬─────┬─────┐   ┌─────┬─────┬─────┬───┬───┬─────┐
-//    │     │ ! │ @ │  {  │  }  │  |  │   │  +  │  7  │  8  │ 9 │ * │     │
-//    ├─────┼───┼───┼─────┼─────┼─────┤   ├─────┼─────┼─────┼───┼───┼─────┤
-//    │     │ # │ $ │  (  │  )  │  `  │   │  0  │  4  │  5  │ 6 │ , │     │
-//    ├─────┼───┼───┼─────┼─────┼─────┤   ├─────┼─────┼─────┼───┼───┼─────┤
-//    │     │ % │ ^ │  [  │  ]  │  ~  │   │  -  │  1  │  2  │ 3 │ / │     │
-//    └─────┴───┴───┼─────┼─────┼─────┤   ├─────┼─────┼─────┼───┴───┴─────┘
-//                  │     │     │     │   │     │     │     │
-//                  └─────┴─────┴─────┘   └─────┴─────┴─────┘
-  &trans   &kp EXCL      &kp AT       &kp LEFT_BRACE         &kp RIGHT_BRACE         &kp PIPE        &kp PLUS    &kp N7   &kp N8   &kp N9   &kp STAR    &trans
-  &trans   &kp POUND     &kp DOLLAR   &kp LEFT_PARENTHESIS   &kp RIGHT_PARENTHESIS   &kp GRAVE       &kp N0      &kp N4   &kp N5   &kp N6   &kp COMMA   &trans
-  &trans   &kp PERCENT   &kp CARET    &kp LEFT_BRACKET       &kp RIGHT_BRACKET       &kp TILDE       &kp MINUS   &kp N1   &kp N2   &kp N3   &kp SLASH   &trans
-                                      &trans                 &trans                  &trans          &trans      &trans   &trans
+&kp TAB    &kp N1  &kp N2  &kp N3    &kp N4  &kp N5         &kp N6    &kp N7    &kp N8    &kp N9     &kp N0  &kp BSPC
+&kp LCTRL  &trans  &trans  &trans    &trans  &trans         &kp LEFT  &kp DOWN  &kp UP    &kp RIGHT  &trans  &trans
+&kp LSHFT  &trans  &trans  &trans    &trans  &trans         &trans    &trans    &trans    &trans     &trans  &trans
+                           &kp LGUI  &trans  &kp SPACE      &kp RET   &trans    &kp RALT
             >;
         };
 
-        misc {
-            display-name = "misc";
+        raise_layer {
+            display-name = "Raise";
+            //  ------------------------------------------------------------------------------------------------------------
+            //  |  TAB |  !  |  @  |  #  |  $  |  %  |         |  ^  |  &   |  *  |  (  |  )  | BKSP |
+            //  | CTRL |     |     |     |     |     |         |  -  |  =   |  [  |  ]  |  \  |  `   |
+            //  | SHFT |     |     |     |     |     |         |  _  |  +   |  {  |  }  | "|" |  ~   |
+            //                     | GUI |     | SPC |         | ENT |      | ALT |
             bindings = <
-//    ┌─────┬──────────┬──────────┬──────────┬──────────┬──────────┐   ┌──────┬──────┬──────┬──────┬─────┬─────┐
-//    │     │ bt_sel 0 │ bt_sel 1 │ bt_sel 2 │ bt_sel 3 │ bt_sel 4 │   │      │ volu │ vold │ mute │     │     │
-//    ├─────┼──────────┼──────────┼──────────┼──────────┼──────────┤   ├──────┼──────┼──────┼──────┼─────┼─────┤
-//    │     │          │          │          │          │ out_ tog │   │ left │ down │  up  │ rght │     │     │
-//    ├─────┼──────────┼──────────┼──────────┼──────────┼──────────┤   ├──────┼──────┼──────┼──────┼─────┼─────┤
-//    │     │          │          │          │          │  bt_clr  │   │      │ prev │ play │ next │     │     │
-//    └─────┴──────────┴──────────┼──────────┼──────────┼──────────┤   ├──────┼──────┼──────┼──────┴─────┴─────┘
-//                                │          │          │          │   │      │      │      │
-//                                └──────────┴──────────┴──────────┘   └──────┴──────┴──────┘
-  &trans   &bt BT_SEL 0   &bt BT_SEL 1   &bt BT_SEL 2   &bt BT_SEL 3   &bt BT_SEL 4       &trans     &kp C_VOLUME_UP   &kp C_VOLUME_DOWN   &kp K_MUTE   &trans   &trans
-  &trans   &trans         &trans         &trans         &trans         &out OUT_TOG       &kp LEFT   &kp DOWN          &kp UP              &kp RIGHT    &trans   &trans
-  &trans   &trans         &trans         &trans         &trans         &bt BT_CLR         &trans     &kp C_PREVIOUS    &kp K_PLAY_PAUSE    &kp C_NEXT   &trans   &trans
-                                         &trans         &trans         &trans             &trans     &trans            &trans
+&kp TAB    &kp EXCL  &kp AT  &kp HASH  &kp DLLR  &kp PRCNT      &kp CARET  &kp AMPS   &kp ASTRK  &kp LPAR  &kp RPAR  &kp BSPC
+&kp LCTRL  &trans    &trans  &trans    &trans    &trans         &kp MINUS  &kp EQUAL  &kp LBKT   &kp RBKT  &kp BSLH  &kp GRAVE
+&kp LSHFT  &trans    &trans  &trans    &trans    &trans         &kp UNDER  &kp PLUS   &kp LBRC   &kp RBRC  &kp PIPE  &kp TILDE
+                             &kp LGUI  &trans    &kp SPACE      &kp RET    &trans     &kp RALT
             >;
         };
 
-        functions {
-            display-name = "func";
+        adjust_layer {
+            display-name = "Adjust";
+            //  ------------------------------------------------------------------------------------------------------------
+            //  | BOOT | BT0 | BT1 | BT2 | BT3 | BT4 |         |     |      |     |     |     | BOOT |
+            //  | UNLK | CLR |     |     |     |     |         | USB | BLE  |     |     |     | RST  |
+            //  | RST  |CLRAL|     |     |     |     |         |     |      |     |     |     |      |
+            //                     |     |     |     |         |     |      |     |
             bindings = <
-//    ┌─────────┬────────────────┬────────────────┬────────────────┬────────────────┬─────┐   ┌─────┬─────┬─────┬────┬─────┬─────┐
-//    │         │  &msc SCRL_up  │                │  &mmv MOVE_up  │                │     │   │     │ f7  │ f8  │ f9 │ f10 │     │
-//    ├─────────┼────────────────┼────────────────┼────────────────┼────────────────┼─────┤   ├─────┼─────┼─────┼────┼─────┼─────┤
-//    │         │ &msc SCRL_down │ &mmv MOVE_left │ &mmv MOVE_down │ &mmv MOVE_rght │     │   │     │ f4  │ f5  │ f6 │ f11 │     │
-//    ├─────────┼────────────────┼────────────────┼────────────────┼────────────────┼─────┤   ├─────┼─────┼─────┼────┼─────┼─────┤
-//    │ tog LOL │                │                │      rclk      │      lclk      │     │   │     │ f1  │ f2  │ f3 │ f12 │     │
-//    └─────────┴────────────────┴────────────────┼────────────────┼────────────────┼─────┤   ├─────┼─────┼─────┼────┴─────┴─────┘
-//                                                │                │                │     │   │     │     │     │
-//                                                └────────────────┴────────────────┴─────┘   └─────┴─────┴─────┘
-  &trans     &msc SCRL_UP     &trans           &mmv MOVE_UP     &trans            &trans       &trans   &kp F7   &kp F8   &kp F9   &kp F10   &trans
-  &trans     &msc SCRL_DOWN   &mmv MOVE_LEFT   &mmv MOVE_DOWN   &mmv MOVE_RIGHT   &trans       &trans   &kp F4   &kp F5   &kp F6   &kp F11   &trans
-  &tog LOL   &trans           &trans           &mkp RCLK        &mkp LCLK         &trans       &trans   &kp F1   &kp F2   &kp F3   &kp F12   &trans
-                                               &trans           &trans            &trans       &trans   &trans   &trans
+&bootloader     &bt BT_SEL 0     &bt BT_SEL 1  &bt BT_SEL 2  &bt BT_SEL 3  &bt BT_SEL 4      &trans         &trans      &trans  &trans  &trans  &bootloader
+&studio_unlock  &bt BT_CLR       &trans        &trans        &trans        &trans            &out OUT_USB   &out OUT_BLE  &trans  &trans  &trans  &sys_reset
+&sys_reset      &bt BT_CLR_ALL   &trans        &trans        &trans        &trans            &trans         &trans      &trans  &trans  &trans  &trans
+                                               &trans        &trans        &trans            &trans         &trans      &trans
             >;
         };
 
-        lol {
-            display-name = "lol";
+        // Couches vides de réserve : elles ne servent à rien telles quelles,
+        // mais elles permettent de créer de nouvelles couches depuis ZMK Studio
+        // sans avoir à recompiler le firmware. Supprime-les si tu n'en veux pas.
+        spare_1 {
+            display-name = "Spare 1";
             bindings = <
-//    ┌─────┬───┬───┬──────┬──────┬─────┐   ┌─────┬─────────┬─────┬─────┬─────┬─────┐
-//    │  =  │ 1 │ 2 │  3   │  4   │  5  │   │     │         │     │     │     │     │
-//    ├─────┼───┼───┼──────┼──────┼─────┤   ├─────┼─────────┼─────┼─────┼─────┼─────┤
-//    │ tab │ Q │ W │  E   │  R   │  T  │   │     │         │     │     │     │     │
-//    ├─────┼───┼───┼──────┼──────┼─────┤   ├─────┼─────────┼─────┼─────┼─────┼─────┤
-//    │ esc │ G │ S │  D   │  F   │  B  │   │     │         │     │     │     │     │
-//    └─────┴───┴───┼──────┼──────┼─────┤   ├─────┼─────────┼─────┼─────┴─────┴─────┘
-//                  │ lalt │ lctl │ spc │   │     │ tog LOL │ f9  │
-//                  └──────┴──────┴─────┘   └─────┴─────────┴─────┘
-  &kp EQUAL   &kp N1   &kp N2   &kp N3         &kp N4      &kp N5          &trans   &trans     &trans   &trans   &trans   &trans
-  &kp TAB     &kp Q    &kp W    &kp E          &kp R       &kp T           &trans   &trans     &trans   &trans   &trans   &trans
-  &kp ESC     &kp G    &kp S    &kp D          &kp F       &kp B           &trans   &trans     &trans   &trans   &trans   &trans
-                                &kp LEFT_ALT   &kp LCTRL   &kp SPACE       &trans   &tog LOL   &kp F9
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans  &trans  &trans
+                        &trans  &trans  &trans      &trans  &trans  &trans
+            >;
+        };
+
+        spare_2 {
+            display-name = "Spare 2";
+            bindings = <
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans      &trans  &trans  &trans  &trans  &trans  &trans
+                        &trans  &trans  &trans      &trans  &trans  &trans
             >;
         };
     };
