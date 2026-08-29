@@ -45,20 +45,23 @@
 
     // Macros d'accents : macOS, disposition systeme U.S.
     //
-    // Option est pressee dans un rapport HID separe de la lettre. Envoyer
-    // LA(x) en un seul rapport fait rater la touche morte sous macOS, qui
-    // traite alors la lettre avant d'avoir applique le modificateur.
+    // Option est pressee dans un rapport HID separe de la lettre : envoyer
+    // LA(x) en un seul rapport fait rater la touche morte sous macOS.
     //   Option + E -> aigu         Option + ` -> grave
     //   Option + I -> circonflexe  Option + U -> trema
+    //
+    // e-aigu utilise l'Option DROITE. C'est le seul accent pose au-dessus d'un
+    // home row mod qui porte le meme modificateur (position 15 = &hml LALT S),
+    // et c'est le seul qui ne sortait pas. RALT supprime le recouvrement.
     macros {
-        m_eacute: m_eacute {      // e aigu     Option+E puis e
+        m_eacute: m_eacute {      // e aigu     Option DROITE + E puis e
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
             wait-ms = <40>;
             tap-ms = <40>;
-            bindings = <&macro_press &kp LALT>
+            bindings = <&macro_press &kp RALT>
                      , <&macro_tap &kp E>
-                     , <&macro_release &kp LALT>
+                     , <&macro_release &kp RALT>
                      , <&macro_tap &kp E>;
         };
 
@@ -180,13 +183,13 @@
             //  | ESC  |  Q  |  W  |  F  |  P  |  G  |     |  J  |  L  |  U  |  Y  |  ;  | BKSP |
             //  | TAB  |  A  |  R  |  S  |  T  |  D  |     |  H  |  N  |  E  |  I  |  O  |  '   |
             //  | SHFT |  Z  |  X  |  C  |  V  |  B  |     |  K  |  M  |  ,  |  .  |  /  | SHFT |
-            //                     | GUI | LWR | SPC |     | ENT | RSE | ALT |
+            //                     | GUI | LWR | SPC |     | ENT | RSE | CMD |
             //  Home row mods :  A=SHFT  R=CTRL  S=ALT  T=GUI    N=GUI  E=ALT  I=CTRL  O=SHFT
             bindings = <
 &kp ESC    &kp Q          &kp W          &kp F          &kp P          &kp G          &kp J     &kp L          &kp U          &kp Y          &kp SEMI       &kp BSPC
 &kp TAB    &hml LSHFT A   &hml LCTRL R   &hml LALT S    &hml LGUI T    &kp D          &kp H     &hmr RGUI N    &hmr RALT E    &hmr RCTRL I   &hmr RSHFT O   &kp SQT
 &kp LSHFT  &kp Z          &kp X          &kp C          &kp V          &kp B          &kp K     &kp M          &kp COMMA      &kp DOT        &kp FSLH       &kp RSHFT
-                                         &kp LGUI       &mo LOWER      &kp SPACE      &kp RET   &mo RAISE      &kp RALT
+                                         &kp LGUI       &mo LOWER      &kp SPACE      &kp RET   &mo RAISE      &kp RGUI
             >;
         };
 
@@ -201,7 +204,7 @@
 &kp GRAVE  &kp N1     &kp N2     &kp N3     &kp N4     &kp N5         &kp N6     &kp N7     &kp N8     &kp N9     &kp N0     &kp BSPC
 &kp TAB    &kp EXCL   &kp AT     &kp HASH   &kp DLLR   &kp PRCNT      &kp CARET  &kp AMPS   &kp ASTRK  &kp LPAR   &kp RPAR   &kp PIPE
 &kp LSHFT  &kp EQUAL  &kp MINUS  &kp PLUS   &kp LBRC   &kp RBRC       &kp LBKT   &kp RBKT   &kp SEMI   &kp COLON  &kp BSLH   &kp RSHFT
-                                 &kp LGUI   &trans     &kp SPACE      &kp RET    &mo ADJUST &kp RALT
+                                 &kp LGUI   &trans     &kp SPACE      &kp RET    &mo ADJUST &kp RGUI
             >;
         };
 
@@ -216,7 +219,7 @@
 &kp ESC    &m_udier   &m_acirc   &m_ocirc   &m_icirc   &m_toto        &kp PG_UP  &none      &kp UP     &none      &kp F12    &kp BSPC
 &kp TAB    &m_agrave  &m_egrave  &m_eacute  &m_ugrave  &m_ucirc       &kp PG_DN  &kp LEFT   &kp DOWN   &kp RIGHT  &kp DEL    &none
 &kp LSHFT  &none      &none      &m_ecirc   &none      &none          &kp CAPS   &none      &none      &none      &none      &none
-                                 &kp LGUI   &mo ADJUST &kp SPACE      &kp RET    &trans     &kp RALT
+                                 &kp LGUI   &mo ADJUST &kp SPACE      &kp RET    &trans     &kp RGUI
             >;
         };
 
