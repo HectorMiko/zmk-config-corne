@@ -34,3 +34,16 @@ include:
     # n'est pas satisfaite sur la peripherique, et Kconfig abandonne. Le snippet
     # ajoute le noeud zephyr,cdc-acm-uart sous zephyr_udc0 en plus du CONFIG.
     snippet: zmk-usb-logging
+    # Le flot <dbg> de ZMK (kscan, split) noie tout et fait deborder les 8 Ko
+    # de LOG_BUFFER_SIZE : on le coupe et on allume le log cote affichage.
+    # Via cmake-args et non corne.conf : ces symboles dependent de CONFIG_LOG,
+    # absent sur la gauche, ou l'assignation deviendrait un warning Kconfig
+    # fatal. ZMK_LOGGING_MINIMAL est necessaire pour neutraliser le
+    # "config ZMK_LOG_LEVEL default 4" de ZMK, qui precede le choix dans
+    # app/Kconfig et gagnerait donc sur ZMK_LOG_LEVEL_WRN.
+    cmake-args: >-
+      -DCONFIG_ZMK_LOGGING_MINIMAL=y
+      -DCONFIG_ZMK_LOG_LEVEL_WRN=y
+      -DCONFIG_LV_USE_LOG=y
+      -DCONFIG_LV_LOG_LEVEL_WARN=y
+      -DCONFIG_DISPLAY_LOG_LEVEL_DBG=y
