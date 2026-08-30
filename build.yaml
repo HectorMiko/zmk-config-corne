@@ -28,4 +28,9 @@ include:
     # Diagnostic affichage (2026-08-30) : logs sur la moitie DROITE seulement.
     # La gauche ne peut pas, le snippet studio-rpc-usb-uart y occupe deja le
     # CDC ACM. A RETIRER une fois le bug trouve (consommation + RAM).
-    cmake-args: -DCONFIG_ZMK_USB_LOGGING=y
+    #
+    # Il faut le snippet, pas -DCONFIG_ZMK_USB_LOGGING=y : le symbole seul
+    # y-selecte USB_CDC_ACM dont la dependance DT_HAS_ZEPHYR_CDC_ACM_UART_ENABLED
+    # n'est pas satisfaite sur la peripherique, et Kconfig abandonne. Le snippet
+    # ajoute le noeud zephyr,cdc-acm-uart sous zephyr_udc0 en plus du CONFIG.
+    snippet: zmk-usb-logging
