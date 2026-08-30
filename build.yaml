@@ -20,23 +20,18 @@
 ---
 
 include:
-  # ===== A. nice-view-gem : la configuration actuelle, cassee. =====
+  # ===== A. gem + Studio : la configuration actuelle. =====
+  # A-gem-right-debug porte LV_USE_LOG et DISPLAY_LOG_LEVEL_DBG : c'est le
+  # firmware qui dira si la moindre trame atteint l'ecran (<dbg> ls0xx: X/Y/W/H
+  # depuis ls0xx_write). Rien d'autre ne permet de trancher entre "le firmware
+  # n'envoie rien" et "il envoie mais l'ecran ne recoit pas".
   - board: nice_nano_v2
     shield: corne_left nice_view_adapter nice_view_gem
     snippet: studio-rpc-usb-uart
     artifact-name: A-gem-left
   - board: nice_nano_v2
     shield: corne_right nice_view_adapter nice_view_gem
-    # Logs USB, moitie DROITE seulement : la gauche ne peut pas, son snippet
-    # studio-rpc-usb-uart occupe deja le CDC ACM. Il faut le snippet et non
-    # -DCONFIG_ZMK_USB_LOGGING=y : le symbole seul y-selecte USB_CDC_ACM dont
-    # la dependance DT_HAS_ZEPHYR_CDC_ACM_UART_ENABLED n'est pas satisfaite.
     snippet: zmk-usb-logging
-    # Couper le flot <dbg> de ZMK (il sature LOG_BUFFER_SIZE) et allumer LVGL
-    # + le driver display. Via cmake-args car ces symboles dependent de
-    # CONFIG_LOG, absent sur la gauche, ou l'assignation serait fatale.
-    # ZMK_LOGGING_MINIMAL neutralise le "ZMK_LOG_LEVEL default 4" de
-    # app/Kconfig, qui precede le choix et gagnerait sinon.
     cmake-args: >-
       -DCONFIG_ZMK_LOGGING_MINIMAL=y
       -DCONFIG_ZMK_LOG_LEVEL_WRN=y
@@ -45,14 +40,32 @@ include:
       -DCONFIG_DISPLAY_LOG_LEVEL_DBG=y
     artifact-name: A-gem-right-debug
 
-  # ===== B. nice_view standard de ZMK : le shield qu'utilisait le firmware =====
-  # Mechboards, ou l'affichage fonctionnait. Seule variable changee par rapport
-  # a A : le module d'affichage. Meme keymap, meme corne.conf, meme ZMK v0.3.
-  # Si B marche, le probleme est dans nice-view-gem et non dans notre config.
+  # ===== C. gem SANS ZMK Studio. =====
+  # B (shield nice_view standard) a echoue comme A : le module d'affichage est
+  # hors de cause. Reste ce que le firmware Mechboards n'avait certainement pas,
+  # et qui est commun a A et B : CONFIG_ZMK_STUDIO=y, pose dans corne.conf donc
+  # actif sur LES DEUX moities alors que le snippet RPC n'est que sur la gauche.
+  # Sans le snippet Studio, le CDC ACM est libre a gauche : on en profite pour
+  # journaliser aussi la centrale, qui porte l'ecran le plus charge.
   - board: nice_nano_v2
-    shield: corne_left nice_view_adapter nice_view
-    snippet: studio-rpc-usb-uart
-    artifact-name: B-stock-left
+    shield: corne_left nice_view_adapter nice_view_gem
+    snippet: zmk-usb-logging
+    cmake-args: >-
+      -DCONFIG_ZMK_STUDIO=n
+      -DCONFIG_ZMK_LOGGING_MINIMAL=y
+      -DCONFIG_ZMK_LOG_LEVEL_WRN=y
+      -DCONFIG_LV_USE_LOG=y
+      -DCONFIG_LV_LOG_LEVEL_WARN=y
+      -DCONFIG_DISPLAY_LOG_LEVEL_DBG=y
+    artifact-name: C-nostudio-left-debug
   - board: nice_nano_v2
-    shield: corne_right nice_view_adapter nice_view
-    artifact-name: B-stock-right
+    shield: corne_right nice_view_adapter nice_view_gem
+    snippet: zmk-usb-logging
+    cmake-args: >-
+      -DCONFIG_ZMK_STUDIO=n
+      -DCONFIG_ZMK_LOGGING_MINIMAL=y
+      -DCONFIG_ZMK_LOG_LEVEL_WRN=y
+      -DCONFIG_LV_USE_LOG=y
+      -DCONFIG_LV_LOG_LEVEL_WARN=y
+      -DCONFIG_DISPLAY_LOG_LEVEL_DBG=y
+    artifact-name: C-nostudio-right-debug
