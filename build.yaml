@@ -20,30 +20,39 @@
 ---
 
 include:
+  # ===== A. nice-view-gem : la configuration actuelle, cassee. =====
   - board: nice_nano_v2
     shield: corne_left nice_view_adapter nice_view_gem
     snippet: studio-rpc-usb-uart
+    artifact-name: A-gem-left
   - board: nice_nano_v2
     shield: corne_right nice_view_adapter nice_view_gem
-    # Diagnostic affichage (2026-08-30) : logs sur la moitie DROITE seulement.
-    # La gauche ne peut pas, le snippet studio-rpc-usb-uart y occupe deja le
-    # CDC ACM. A RETIRER une fois le bug trouve (consommation + RAM).
-    #
-    # Il faut le snippet, pas -DCONFIG_ZMK_USB_LOGGING=y : le symbole seul
-    # y-selecte USB_CDC_ACM dont la dependance DT_HAS_ZEPHYR_CDC_ACM_UART_ENABLED
-    # n'est pas satisfaite sur la peripherique, et Kconfig abandonne. Le snippet
-    # ajoute le noeud zephyr,cdc-acm-uart sous zephyr_udc0 en plus du CONFIG.
+    # Logs USB, moitie DROITE seulement : la gauche ne peut pas, son snippet
+    # studio-rpc-usb-uart occupe deja le CDC ACM. Il faut le snippet et non
+    # -DCONFIG_ZMK_USB_LOGGING=y : le symbole seul y-selecte USB_CDC_ACM dont
+    # la dependance DT_HAS_ZEPHYR_CDC_ACM_UART_ENABLED n'est pas satisfaite.
     snippet: zmk-usb-logging
-    # Le flot <dbg> de ZMK (kscan, split) noie tout et fait deborder les 8 Ko
-    # de LOG_BUFFER_SIZE : on le coupe et on allume le log cote affichage.
-    # Via cmake-args et non corne.conf : ces symboles dependent de CONFIG_LOG,
-    # absent sur la gauche, ou l'assignation deviendrait un warning Kconfig
-    # fatal. ZMK_LOGGING_MINIMAL est necessaire pour neutraliser le
-    # "config ZMK_LOG_LEVEL default 4" de ZMK, qui precede le choix dans
-    # app/Kconfig et gagnerait donc sur ZMK_LOG_LEVEL_WRN.
+    # Couper le flot <dbg> de ZMK (il sature LOG_BUFFER_SIZE) et allumer LVGL
+    # + le driver display. Via cmake-args car ces symboles dependent de
+    # CONFIG_LOG, absent sur la gauche, ou l'assignation serait fatale.
+    # ZMK_LOGGING_MINIMAL neutralise le "ZMK_LOG_LEVEL default 4" de
+    # app/Kconfig, qui precede le choix et gagnerait sinon.
     cmake-args: >-
       -DCONFIG_ZMK_LOGGING_MINIMAL=y
       -DCONFIG_ZMK_LOG_LEVEL_WRN=y
       -DCONFIG_LV_USE_LOG=y
       -DCONFIG_LV_LOG_LEVEL_WARN=y
       -DCONFIG_DISPLAY_LOG_LEVEL_DBG=y
+    artifact-name: A-gem-right-debug
+
+  # ===== B. nice_view standard de ZMK : le shield qu'utilisait le firmware =====
+  # Mechboards, ou l'affichage fonctionnait. Seule variable changee par rapport
+  # a A : le module d'affichage. Meme keymap, meme corne.conf, meme ZMK v0.3.
+  # Si B marche, le probleme est dans nice-view-gem et non dans notre config.
+  - board: nice_nano_v2
+    shield: corne_left nice_view_adapter nice_view
+    snippet: studio-rpc-usb-uart
+    artifact-name: B-stock-left
+  - board: nice_nano_v2
+    shield: corne_right nice_view_adapter nice_view
+    artifact-name: B-stock-right
