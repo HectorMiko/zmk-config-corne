@@ -20,34 +20,31 @@
 ---
 
 include:
-  # ===== M. Configuration Mechboards reproduite, avec NOTRE keymap. =====
-  # Leur firmware pilote nos ecrans ; le seul ecart restant est le keymap.
   - board: nice_nano_v2
     shield: corne_left nice_view_adapter nice_view_gem
     snippet: studio-rpc-usb-uart
-    artifact-name: M-mechboards-left
   - board: nice_nano_v2
     shield: corne_right nice_view_adapter nice_view_gem
-    artifact-name: M-mechboards-right
 
-  # ===== E. Notre conf minimale d'origine + la seule alimentation externe. =====
-  # ZMK_EXT_POWER n'apparait qu'une fois dans app/Kconfig, sans default y :
-  # rien ne l'active, donc ext_power_generic.c n'est meme pas compile et
-  # P0.13 n'est jamais pilote. Or sur le nice!nano v2 cette broche commande
-  # le MOSFET du rail VCC, celui qui alimente l'ecran. Si M marche et E
-  # aussi, la cause est la, en une ligne.
+  # Filet de securite : si le CS seul ne suffisait pas, ceux-ci ajoutent le
+  # reste du corne.conf de Mechboards (underglow, puissance BT, animation).
+  # A ignorer si les deux firmwares ci-dessus suffisent.
   - board: nice_nano_v2
     shield: corne_left nice_view_adapter nice_view_gem
     snippet: studio-rpc-usb-uart
     cmake-args: >-
-      -DCONFIG_ZMK_RGB_UNDERGLOW=n
-      -DCONFIG_WS2812_STRIP=n
-      -DCONFIG_ZMK_EXT_POWER=y
-    artifact-name: E-extpower-left
+      -DCONFIG_ZMK_RGB_UNDERGLOW=y
+      -DCONFIG_WS2812_STRIP=y
+      -DCONFIG_ZMK_RGB_UNDERGLOW_BRT_MAX=25
+      -DCONFIG_BT_CTLR_TX_PWR_PLUS_8=y
+      -DCONFIG_NICE_VIEW_GEM_ANIMATION=n
+    artifact-name: fallback-mechboards-conf-left
   - board: nice_nano_v2
     shield: corne_right nice_view_adapter nice_view_gem
     cmake-args: >-
-      -DCONFIG_ZMK_RGB_UNDERGLOW=n
-      -DCONFIG_WS2812_STRIP=n
-      -DCONFIG_ZMK_EXT_POWER=y
-    artifact-name: E-extpower-right
+      -DCONFIG_ZMK_RGB_UNDERGLOW=y
+      -DCONFIG_WS2812_STRIP=y
+      -DCONFIG_ZMK_RGB_UNDERGLOW_BRT_MAX=25
+      -DCONFIG_BT_CTLR_TX_PWR_PLUS_8=y
+      -DCONFIG_NICE_VIEW_GEM_ANIMATION=n
+    artifact-name: fallback-mechboards-conf-right
