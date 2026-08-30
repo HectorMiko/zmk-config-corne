@@ -20,52 +20,13 @@
 ---
 
 include:
-  # ===== A. gem + Studio : la configuration actuelle. =====
-  # A-gem-right-debug porte LV_USE_LOG et DISPLAY_LOG_LEVEL_DBG : c'est le
-  # firmware qui dira si la moindre trame atteint l'ecran (<dbg> ls0xx: X/Y/W/H
-  # depuis ls0xx_write). Rien d'autre ne permet de trancher entre "le firmware
-  # n'envoie rien" et "il envoie mais l'ecran ne recoit pas".
-  - board: nice_nano_v2
+  # Carte : "nice_nano//zmk" depuis le passage au modele materiel v2 de
+  # Zephyr. L'ancien "nice_nano_v2" ne correspond plus a rien, et c'est ce
+  # qui donnait l'erreur "undefined node label 'nice_view_spi'" : l'overlay
+  # de nice_view_adapter, renomme nice_nano_nrf52840_zmk.overlay, n'etait
+  # tout simplement jamais charge.
+  - board: nice_nano//zmk
     shield: corne_left nice_view_adapter nice_view_gem
     snippet: studio-rpc-usb-uart
-    artifact-name: A-gem-left
-  - board: nice_nano_v2
+  - board: nice_nano//zmk
     shield: corne_right nice_view_adapter nice_view_gem
-    snippet: zmk-usb-logging
-    cmake-args: >-
-      -DCONFIG_ZMK_LOGGING_MINIMAL=y
-      -DCONFIG_ZMK_LOG_LEVEL_WRN=y
-      -DCONFIG_LV_USE_LOG=y
-      -DCONFIG_LV_LOG_LEVEL_WARN=y
-      -DCONFIG_DISPLAY_LOG_LEVEL_DBG=y
-    artifact-name: A-gem-right-debug
-
-  # ===== C. gem SANS ZMK Studio. =====
-  # B (shield nice_view standard) a echoue comme A : le module d'affichage est
-  # hors de cause. Reste ce que le firmware Mechboards n'avait certainement pas,
-  # et qui est commun a A et B : CONFIG_ZMK_STUDIO=y, pose dans corne.conf donc
-  # actif sur LES DEUX moities alors que le snippet RPC n'est que sur la gauche.
-  # Sans le snippet Studio, le CDC ACM est libre a gauche : on en profite pour
-  # journaliser aussi la centrale, qui porte l'ecran le plus charge.
-  - board: nice_nano_v2
-    shield: corne_left nice_view_adapter nice_view_gem
-    snippet: zmk-usb-logging
-    cmake-args: >-
-      -DCONFIG_ZMK_STUDIO=n
-      -DCONFIG_ZMK_LOGGING_MINIMAL=y
-      -DCONFIG_ZMK_LOG_LEVEL_WRN=y
-      -DCONFIG_LV_USE_LOG=y
-      -DCONFIG_LV_LOG_LEVEL_WARN=y
-      -DCONFIG_DISPLAY_LOG_LEVEL_DBG=y
-    artifact-name: C-nostudio-left-debug
-  - board: nice_nano_v2
-    shield: corne_right nice_view_adapter nice_view_gem
-    snippet: zmk-usb-logging
-    cmake-args: >-
-      -DCONFIG_ZMK_STUDIO=n
-      -DCONFIG_ZMK_LOGGING_MINIMAL=y
-      -DCONFIG_ZMK_LOG_LEVEL_WRN=y
-      -DCONFIG_LV_USE_LOG=y
-      -DCONFIG_LV_LOG_LEVEL_WARN=y
-      -DCONFIG_DISPLAY_LOG_LEVEL_DBG=y
-    artifact-name: C-nostudio-right-debug

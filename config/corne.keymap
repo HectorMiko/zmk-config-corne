@@ -13,21 +13,23 @@
 #define KEYS_R  6  7  8  9 10 11 18 19 20 21 22 23 30 31 32 33 34 35
 #define THUMBS 36 37 38 39 40 41
 
-// Liberer P0.06 pour le CS du nice!view.
+// Inversion VCOM du nice!view.
 //
-// Deux noeuds se disputent cette broche :
-//   - le CS de l'ecran, cs-gpios = <&pro_micro 1 ...> dans
-//     nice_view_adapter/boards/nice_nano_v2.overlay, et pro_micro 1 vaut
-//     <&gpio0 6> d'apres arduino_pro_micro_pins.dtsi ;
-//   - le MOSI de SPIM3 pour le ruban WS2812, NRF_PSEL(SPIM_MOSI, 0, 6) avec
-//     status = "okay" inconditionnel, dans corne/boards/nice_nano_v2.overlay.
+// Un LCD a memoire Sharp exige une inversion periodique de polarite, sinon
+// une tension continue s'installe dans le cristal liquide et l'image se
+// degrade jusqu'a disparaitre. Le driver ls0xx de Zephyr 4.1 sait le faire
+// en serie, mais c'est OPT-IN :
 //
-// Quand pinctrl attribue P0.06 a SPIM3, le CS ne bascule plus et le ls0xx
-// emet des trames completes que la dalle n'accepte jamais : c'est exactement
-// ce que montre le log (ls0xx_write 160x68 en boucle, ecran noir).
-// On n'utilise pas l'underglow, donc desactiver spi3 ne coute rien.
-&spi3 {
-    status = "disabled";
+//   #if DT_INST_PROP(0, serial_vcom_inversion) || DT_INST_NODE_HAS_PROP(0, extcomin_gpios)
+//   #define USE_VCOM_THREAD true
+//
+// Le nice!view n'a pas de broche extcomin, et l'overlay de nice-view-gem ne
+// pose pas serial-vcom-inversion -- contrairement a celui du shield nice_view
+// de ZMK, corrige dans 3538843a (#3294). Sans ces deux lignes, la migration
+// vers main ne reparerait rien. Intervalle 33 ms, la valeur de ZMK.
+&nice_view {
+    serial-vcom-inversion;
+    serial-vcom-interval = <33>;
 };
 
 / {
