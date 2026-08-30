@@ -25,3 +25,7 @@ include:
     snippet: studio-rpc-usb-uart
   - board: nice_nano_v2
     shield: corne_right nice_view_adapter nice_view_gem
+    # Diagnostic affichage (2026-08-30) : logs sur la moitie DROITE seulement.
+    # La gauche ne peut pas, le snippet studio-rpc-usb-uart y occupe deja le
+    # CDC ACM. A RETIRER une fois le bug trouve (consommation + RAM).
+    cmake-args: -DCONFIG_ZMK_USB_LOGGING=y
