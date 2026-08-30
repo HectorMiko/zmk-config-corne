@@ -20,13 +20,34 @@
 ---
 
 include:
-  # Carte : "nice_nano//zmk" depuis le passage au modele materiel v2 de
-  # Zephyr. L'ancien "nice_nano_v2" ne correspond plus a rien, et c'est ce
-  # qui donnait l'erreur "undefined node label 'nice_view_spi'" : l'overlay
-  # de nice_view_adapter, renomme nice_nano_nrf52840_zmk.overlay, n'etait
-  # tout simplement jamais charge.
-  - board: nice_nano//zmk
+  # ===== M. Configuration Mechboards reproduite, avec NOTRE keymap. =====
+  # Leur firmware pilote nos ecrans ; le seul ecart restant est le keymap.
+  - board: nice_nano_v2
     shield: corne_left nice_view_adapter nice_view_gem
     snippet: studio-rpc-usb-uart
-  - board: nice_nano//zmk
+    artifact-name: M-mechboards-left
+  - board: nice_nano_v2
     shield: corne_right nice_view_adapter nice_view_gem
+    artifact-name: M-mechboards-right
+
+  # ===== E. Notre conf minimale d'origine + la seule alimentation externe. =====
+  # ZMK_EXT_POWER n'apparait qu'une fois dans app/Kconfig, sans default y :
+  # rien ne l'active, donc ext_power_generic.c n'est meme pas compile et
+  # P0.13 n'est jamais pilote. Or sur le nice!nano v2 cette broche commande
+  # le MOSFET du rail VCC, celui qui alimente l'ecran. Si M marche et E
+  # aussi, la cause est la, en une ligne.
+  - board: nice_nano_v2
+    shield: corne_left nice_view_adapter nice_view_gem
+    snippet: studio-rpc-usb-uart
+    cmake-args: >-
+      -DCONFIG_ZMK_RGB_UNDERGLOW=n
+      -DCONFIG_WS2812_STRIP=n
+      -DCONFIG_ZMK_EXT_POWER=y
+    artifact-name: E-extpower-left
+  - board: nice_nano_v2
+    shield: corne_right nice_view_adapter nice_view_gem
+    cmake-args: >-
+      -DCONFIG_ZMK_RGB_UNDERGLOW=n
+      -DCONFIG_WS2812_STRIP=n
+      -DCONFIG_ZMK_EXT_POWER=y
+    artifact-name: E-extpower-right

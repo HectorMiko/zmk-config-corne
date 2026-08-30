@@ -13,25 +13,6 @@
 #define KEYS_R  6  7  8  9 10 11 18 19 20 21 22 23 30 31 32 33 34 35
 #define THUMBS 36 37 38 39 40 41
 
-// Inversion VCOM du nice!view.
-//
-// Un LCD a memoire Sharp exige une inversion periodique de polarite, sinon
-// une tension continue s'installe dans le cristal liquide et l'image se
-// degrade jusqu'a disparaitre. Le driver ls0xx de Zephyr 4.1 sait le faire
-// en serie, mais c'est OPT-IN :
-//
-//   #if DT_INST_PROP(0, serial_vcom_inversion) || DT_INST_NODE_HAS_PROP(0, extcomin_gpios)
-//   #define USE_VCOM_THREAD true
-//
-// Le nice!view n'a pas de broche extcomin, et l'overlay de nice-view-gem ne
-// pose pas serial-vcom-inversion -- contrairement a celui du shield nice_view
-// de ZMK, corrige dans 3538843a (#3294). Sans ces deux lignes, la migration
-// vers main ne reparerait rien. Intervalle 33 ms, la valeur de ZMK.
-&nice_view {
-    serial-vcom-inversion;
-    serial-vcom-interval = <33>;
-};
-
 / {
     behaviors {
         // Home row mods. Le maintien ne declenche le modificateur que si la

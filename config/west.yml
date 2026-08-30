@@ -2,22 +2,16 @@ manifest:
   remotes:
     - name: zmkfirmware
       url-base: https://github.com/zmkfirmware
-    - name: m165437
-      url-base: https://github.com/M165437
   projects:
-    # ZMK main (Zephyr 4.1). v0.3 est inutilisable ici : son driver ls0xx
-    # n'inverse le VCOM que via une broche extcomin-gpios, que le nice!view
-    # n'expose pas, donc l'image se degrade jusqu'a disparaitre. Le support
-    # du VCOM serie est arrive dans 3538843a (2026-03-31, #3294), soit huit
-    # mois apres la sortie de v0.3.0 (2025-08-01).
+    # Identique a la config Mechboards (MechboardsLTD/zmk-config, branche
+    # refresh_mips), dont le firmware fait fonctionner nos ecrans.
     - name: zmk
       remote: zmkfirmware
-      revision: main
+      revision: v0.3
       import: app/west.yml
-    # nice-view-gem : v0.3.0 est explicitement la derniere version pour
-    # ZMK v0.3 ; main est la branche pour Zephyr 4.1 et LVGL 9.
-    - name: nice-view-gem
-      remote: m165437
-      revision: main
+    # Leur fork de nice-view-gem, pour eliminer aussi cette variable.
+    - name: nv-gem
+      url: https://github.com/MechboardsLTD/zmk-module
+      revision: nv_gem
   self:
     path: config
