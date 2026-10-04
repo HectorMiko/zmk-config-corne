@@ -77,8 +77,8 @@
         m_eacute: m_eacute {      // e aigu     Option DROITE + E puis e
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
+            wait-ms = <10>;
+            tap-ms = <10>;
             bindings = <&macro_press &kp RALT>
                      , <&macro_tap &kp E>
                      , <&macro_release &kp RALT>
@@ -88,8 +88,8 @@
         m_egrave: m_egrave {      // e grave    Option+` puis e
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
+            wait-ms = <10>;
+            tap-ms = <10>;
             bindings = <&macro_press &kp LALT>
                      , <&macro_tap &kp GRAVE>
                      , <&macro_release &kp LALT>
@@ -99,8 +99,8 @@
         m_ecirc: m_ecirc {      // e circ     Option+i puis e
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
+            wait-ms = <10>;
+            tap-ms = <10>;
             bindings = <&macro_press &kp LALT>
                      , <&macro_tap &kp I>
                      , <&macro_release &kp LALT>
@@ -110,8 +110,8 @@
         m_agrave: m_agrave {      // a grave    Option+` puis a
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
+            wait-ms = <10>;
+            tap-ms = <10>;
             bindings = <&macro_press &kp LALT>
                      , <&macro_tap &kp GRAVE>
                      , <&macro_release &kp LALT>
@@ -121,8 +121,8 @@
         m_acirc: m_acirc {      // a circ     Option+i puis a
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
+            wait-ms = <10>;
+            tap-ms = <10>;
             bindings = <&macro_press &kp LALT>
                      , <&macro_tap &kp I>
                      , <&macro_release &kp LALT>
@@ -132,8 +132,8 @@
         m_icirc: m_icirc {      // i circ     Option+i puis i
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
+            wait-ms = <10>;
+            tap-ms = <10>;
             bindings = <&macro_press &kp LALT>
                      , <&macro_tap &kp I>
                      , <&macro_release &kp LALT>
@@ -143,8 +143,8 @@
         m_ocirc: m_ocirc {      // o circ     Option+i puis o
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
+            wait-ms = <10>;
+            tap-ms = <10>;
             bindings = <&macro_press &kp LALT>
                      , <&macro_tap &kp I>
                      , <&macro_release &kp LALT>
@@ -154,8 +154,8 @@
         m_ugrave: m_ugrave {      // u grave    Option+` puis u
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
+            wait-ms = <10>;
+            tap-ms = <10>;
             bindings = <&macro_press &kp LALT>
                      , <&macro_tap &kp GRAVE>
                      , <&macro_release &kp LALT>
@@ -165,8 +165,8 @@
         m_ucirc: m_ucirc {      // u circ     Option+i puis u
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
+            wait-ms = <10>;
+            tap-ms = <10>;
             bindings = <&macro_press &kp LALT>
                      , <&macro_tap &kp I>
                      , <&macro_release &kp LALT>
@@ -176,8 +176,8 @@
         m_udier: m_udier {      // u trema    Option+u puis u
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            wait-ms = <40>;
-            tap-ms = <40>;
+            wait-ms = <10>;
+            tap-ms = <10>;
             bindings = <&macro_press &kp LALT>
                      , <&macro_tap &kp U>
                      , <&macro_release &kp LALT>
@@ -187,8 +187,8 @@
         m_toto: m_toto {              // totototo42$
             compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
-            wait-ms = <20>;
-            tap-ms = <20>;
+            wait-ms = <10>;
+            tap-ms = <10>;
             bindings = <&kp T &kp O &kp T &kp O &kp T &kp O &kp T &kp O
                         &kp N4 &kp N2 &kp LS(N4)>;
         };
